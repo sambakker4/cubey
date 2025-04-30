@@ -1,0 +1,45 @@
+/*
+Dark green: #264653
+Light green: #2a9d8f
+Yellow: #e9c46a
+Light orange: #f4a261
+Dark orange: #e76f51
+*/
+:root {
+    --dark-green: #264653;
+    --light-green: #2a9d8f;
+    --yellow: #e9c46a;
+    --light-orange: #e76f51;
+    --dark-orange: #e76f51;
+}
+
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 6rem;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-size: 40px;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--light-orange);
+    background-color: var(--dark-green) ;
+}
+
+aside {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: var(--dark-green);
+    position: static;
+    top: 6rem;
+    left: 0;
+    height: 1000%;
+    width: 20%;
+}
