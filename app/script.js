@@ -51,10 +51,9 @@ function stopTimer() {
 createTable(timeTable, tableHeadings, rows);
 document.addEventListener("keydown", (event) => {
     if (event.key == " ") {
-        if (!isRunning && Date.now() - startedHolding >= timeToHold) {
+        if (beingHeld && Date.now() - startedHolding >= timeToHold) {
             document.getElementById("time").style.color = "green";
         }
-
         if (isRunning) {
             isRunning = false;
             justStopped = true;
@@ -63,7 +62,7 @@ document.addEventListener("keydown", (event) => {
             startedHolding = Date.now();
             document.getElementById("time").style.color = "red";
             beingHeld = true;
-        }
+        } 
     }
 })
 
@@ -71,7 +70,6 @@ document.addEventListener("keyup", (event) => {
     if (event.key == " ") {
         beingHeld = false;
         if (!justStopped) {
-            console.log(Date.now() - startedHolding);
             if (Date.now() - startedHolding >= timeToHold) {
                 isRunning = true;
                 startTimer();
