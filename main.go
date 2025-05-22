@@ -16,12 +16,18 @@ import (
 type config struct {
 	db          *database.Queries
 	tokenSecret string
+	platform    string
 }
 
 func main() {
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	dbURL := os.Getenv("DB_URL")
 	tokenSecret := os.Getenv("TOKEN_SECRET")
+	platform := os.Getenv("PLATFORM")
 
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
@@ -32,6 +38,7 @@ func main() {
 	cfg := config{
 		db:          dbQueries,
 		tokenSecret: tokenSecret,
+		platform:    platform,
 	}
 
 	const port = "8080"
@@ -47,6 +54,8 @@ func main() {
 	mux.Handle("/", http.StripPrefix("/", handler))
 
 	mux.HandleFunc("POST /api/users", cfg.CreateUser)
+	
+	mux.HandleFunc("GET /api/scramble", cfg.GetScramble)
 
 	fmt.Printf("Serving files on port %v\n", port)
 	err = server.ListenAndServe()

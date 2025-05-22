@@ -17,8 +17,9 @@ func (cfg config) CreateUser(writer http.ResponseWriter, req *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 
 	decoder := json.NewDecoder(req.Body)
+	defer req.Body.Close()
 	var userInfo UserReq
-	err := decoder.Decode(userInfo)
+	err := decoder.Decode(&userInfo)
 
 	if err != nil {
 		RespondWithError(writer, 400, "error decoding json")

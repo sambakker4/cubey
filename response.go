@@ -11,6 +11,7 @@ type returnError struct {
 }
 
 func RespondWithError(writer http.ResponseWriter, statusCode int, message string) {
+	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(statusCode)
 	msg, _ := json.Marshal(returnError{
 		Error: message,
@@ -20,6 +21,7 @@ func RespondWithError(writer http.ResponseWriter, statusCode int, message string
 }
 
 func RespondWithJson(writer http.ResponseWriter, statusCode int, payload interface{}) {
+	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(statusCode)
 	load, err := json.Marshal(payload)
 	if err != nil {
