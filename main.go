@@ -54,8 +54,9 @@ func main() {
 	mux.Handle("/", http.StripPrefix("/", handler))
 
 	mux.HandleFunc("POST /api/users", cfg.CreateUser)
+
+	mux.HandleFunc("PUT /admin/reset", cfg.ResetUsers)
 	
-	mux.HandleFunc("GET /api/scramble", cfg.GetScramble)
 
 	fmt.Printf("Serving files on port %v\n", port)
 	err = server.ListenAndServe()

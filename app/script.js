@@ -1,4 +1,5 @@
 import { updateTimer } from "./timer.js";
+import { generateScramble } from "./scramble.js"
 
 const timeTable = document.getElementById("time-table");
 let rows = [["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"]];
@@ -46,9 +47,11 @@ function startTimer() {
 
 function stopTimer() {
     clearInterval(timerId);
+    document.getElementById("scramble").textContent = generateScramble(20, "3x3");
 }
 
 createTable(timeTable, tableHeadings, rows);
+document.getElementById("scramble").textContent = generateScramble(20, "3x3");
 document.addEventListener("keydown", (event) => {
     if (event.key == " ") {
         if (beingHeld && Date.now() - startedHolding >= timeToHold) {
