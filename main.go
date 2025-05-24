@@ -52,16 +52,16 @@ func main() {
 
 	handler := http.FileServer(http.Dir(filePathRoot))
 	mux.Handle("/", http.StripPrefix("/", handler))
+	mux.HandleFunc("PUT /admin/reset", cfg.ResetUsers)
 
 	mux.HandleFunc("POST /api/users", cfg.CreateUser)
 
-	mux.HandleFunc("PUT /admin/reset", cfg.ResetUsers)
-	
+	mux.HandleFunc("POST /api/login", cfg.LoginUser)
 
 	fmt.Printf("Serving files on port %v\n", port)
-	err = server.ListenAndServe()
+	server.ListenAndServe()
+	
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }

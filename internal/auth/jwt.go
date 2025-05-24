@@ -22,7 +22,7 @@ func MakeJWT(id uuid.UUID, tokenSecret string, expiresIn time.Duration) (string,
 		Subject: id.String(),
 	})	
 
-	tokenString, err := token.SignedString(tokenSecret)
+	tokenString, err := token.SignedString([]byte(tokenSecret))
 	if err != nil {
 		return "", err
 	}
