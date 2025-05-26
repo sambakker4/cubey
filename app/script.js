@@ -1,44 +1,29 @@
 import { updateTimer } from "./timer.js";
 import { generateScramble } from "./scramble.js"
+import { createTable } from "./timeTable.js"
+import { showLoginPage } from "./login.js";
 
 const timeTable = document.getElementById("time-table");
 let rows = [["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"]];
 const tableHeadings = ["Num", "Time"];
 let timerId;
 let isRunning = false;
-let currentTime = "00:00";
 let startedHolding = 0;
 let justStopped = false;
 let beingHeld = false;
 const timeToHold = 1000;
+let token;
+const url = "localhost:8080";
 
-function createTable(timeTable, headings, rows) {
-    let tblHead = document.createElement("thead");
-    timeTable.appendChild(tblHead);
-    let tblBody = document.createElement("tbody");
-    timeTable.appendChild(tblBody);
-    
-    for (let heading of headings) {
-        let th = document.createElement("th");
-        tblHead.appendChild(th);
-        th.innerText = heading;
-        th.setAttribute("scope", "col");
-    }
-    
-    for (let row of rows) {
-        let tblRow = document.createElement("tr");
-        tblBody.appendChild(tblRow);
-
-        for (let item of row) {
-            let data = document.createElement("td");
-            tblRow.appendChild(data);
-            data.innerText = item;
-        }
+function loginPage() {
+    let loginPage = document.getElementById("login-page");
+    if (loginPage.style.display == "none") {
+        loginPage.style.display = flex;
     }
 }
 
 function startTimer() {
-    document.getElementById("time").textContent = "00:00.00";
+    document.getElementById("time").textContent = "0.00";
     let startTime = Date.now()
     timerId = setInterval(() => {
         updateTimer(startTime, "time");
@@ -52,6 +37,9 @@ function stopTimer() {
 
 createTable(timeTable, tableHeadings, rows);
 document.getElementById("scramble").textContent = generateScramble(20, "3x3");
+
+
+document.getElementById("login-button").addEventListener("click", showLoginPage);
 document.addEventListener("keydown", (event) => {
     if (event.key == " ") {
         if (beingHeld && Date.now() - startedHolding >= timeToHold) {
