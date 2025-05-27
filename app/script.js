@@ -1,7 +1,6 @@
 import { updateTimer } from "./timer.js";
 import { generateScramble } from "./scramble.js"
 import { createTable } from "./timeTable.js"
-import { showLoginPage } from "./login.js";
 
 const timeTable = document.getElementById("time-table");
 let rows = [["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"]];
@@ -14,13 +13,6 @@ let beingHeld = false;
 const timeToHold = 1000;
 let token;
 const url = "localhost:8080";
-
-function loginPage() {
-    let loginPage = document.getElementById("login-page");
-    if (loginPage.style.display == "none") {
-        loginPage.style.display = flex;
-    }
-}
 
 function startTimer() {
     document.getElementById("time").textContent = "0.00";
@@ -39,7 +31,13 @@ createTable(timeTable, tableHeadings, rows);
 document.getElementById("scramble").textContent = generateScramble(20, "3x3");
 
 
-document.getElementById("login-button").addEventListener("click", showLoginPage);
+document.getElementById("login-button").addEventListener("click", () => {
+    document.getElementById("login-page").style.display = "flex";
+});
+
+document.getElementById("close-login-page-button").addEventListener("click", () => {
+    document.getElementById("login-page").style.display = "none";
+});
 document.addEventListener("keydown", (event) => {
     if (event.key == " ") {
         if (beingHeld && Date.now() - startedHolding >= timeToHold) {

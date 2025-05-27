@@ -58,6 +58,19 @@ nav {
     color: var(--light-orange);
 }
 
+#close-login-page-button {
+    font-size: 20px;
+    position: absolute;
+    left: calc(100% - 60px);
+    top: 20px;
+}
+
+#close-login-page-button button {
+    align-self: flex-start;
+    background-color: var(--dark-green);
+    color: var(--light-orange);
+}
+
 #login-button {
     width: 5%;
     height: 30%;
