@@ -38,10 +38,10 @@ nav {
 }
 
 #cubey-logo {
-    width: 15%;
+    width: 13vw;
 }
 
-#login-page {
+#login-page, #signup-page {
     display: none;
     flex-direction: column;
     align-items: center;
@@ -58,24 +58,24 @@ nav {
     color: var(--light-orange);
 }
 
-#close-login-page-button {
+#close-login-page-button, #close-signup-page-button {
     font-size: 20px;
     position: absolute;
     left: calc(100% - 60px);
     top: 20px;
 }
 
-#close-login-page-button button {
+#close-login-page-button button, #close-signup-page-button button {
     align-self: flex-start;
     background-color: var(--dark-green);
     color: var(--light-orange);
 }
 
-#login-button {
-    width: 5%;
+#login-button, #signup-button {
+    width: 5vw;
     height: 30%;
-    margin: 30px;
-    font-size: 15px;
+    margin: 10px;
+    font-size: 1vw;
     background-color: var(--light-orange);
     border-radius: 10px;
     font-family: "Inter", sans-serif;
@@ -91,17 +91,19 @@ form {
     justify-content: center;
 }
 
-#login-page fieldset {
+#login-page fieldset, #signup-page fieldset {
     border: none; 
 }
 
-#login-page #display-error {
+#login-page #display-error-login, #signup-page #display-error-signup {
     color: red;
+    display: none;
 }
 
 #scramble {
     display: flex;
     height: 6rem;
+    font-size: 2vw;
     justify-content: center;
     align-items: center;
 }
@@ -171,14 +173,3 @@ th, td {
     border: 4px solid var(--dark-green);
 }
 
-@media (width < 700px) {
-    #cubey-logo {
-        width: 35%;
-    }
-    aside {
-        width: 50rem;
-    }
-    #scramble {
-        font-size: 25px;
-    }
-}

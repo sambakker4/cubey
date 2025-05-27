@@ -9,17 +9,17 @@ async function loginUser(email, password, url) {
             headers: {
                 "Content-Type": "application/json"
             }
-        }
-        )
+        });
+        const data = await response.json();
 
+        if (data.error !== undefined) {
+            return [data.error];
+        }
+
+        return [data.token, data.refreshToken]
     } catch(err) {
         console.log(err)
     }
-    if (response.error !== undefined) {
-        throw new Error(response.error)
-    }
-
-    return [response.token, response.refreshToken]
 }
 
 function showLoginPage() {

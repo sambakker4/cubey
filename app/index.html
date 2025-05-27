@@ -8,24 +8,45 @@
     </head>
 
     <body>
+        <div id="signup-page">
+            <div id="close-signup-page-button">
+                <button>X</button>
+            </div>
+            <h3>Signup For Cubey</h3>
+            <form id="signup-page-form">
+                <h4 id="display-error-signup"></h4>
+                <fieldset>
+                    <legend>Email</legend>
+
+                    <input type="text" id="signup-email">
+                </fieldset>
+                <fieldset>
+                    <legend>Password</legend>
+
+                    <input type="password" id="signup-password">
+                </fieldset>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+
         <div id="login-page">
             <div id="close-login-page-button">
                 <button>X</button>
             </div>
             <h3>Login Cubey</h3>
-            <form>
-                <div id="display-error"></div>
+            <form id="login-page-form">
+                <h4 id="display-error-login"></h4>
                 <fieldset>
                     <legend>Email</legend>
 
-                    <input type="text" id="email">
+                    <input type="text" id="login-email">
                 </fieldset>
                 <fieldset>
                     <legend>Password</legend>
 
-                    <input type="password" id="password">
+                    <input type="password" id="login-password">
                 </fieldset>
-                <input type="submit">
+                <button type="submit">Login</button>
             </form>
         </div>
 
@@ -33,6 +54,7 @@
             <img src="images/cubey_logo.png" alt="cubey logo" id="cubey-logo">
             <div id="scramble">F' D' R U B2 F2 D U2 R2 U' F2 L2 B' F2 D F D' B' R</div>
             <button id="login-button">Login</button>
+            <button id="signup-button">Sign Up</button>
         </nav>
 
         <div id="main-page">
