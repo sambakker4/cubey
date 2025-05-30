@@ -2,28 +2,19 @@ package main
 
 import (
 	"time"
-	"encoding/json"
 	"net/http"
 
 	"github.com/sambakker4/cubey/internal/auth"
 )
 
-type RefreshReq struct {
-	Token string `json:"token"`
-}
-
 func (cfg config) Refresh(writer http.ResponseWriter, req *http.Request) {
-	decoder := json.NewDecoder(req.Body)
-	defer req.Body.Close()
-
-	var userInfo RefreshReq
-	err := decoder.Decode(&userInfo)
+	tokenString, err := auth.GetBearerToken(req.Header)
 	if err != nil {
-		RespondWithError(writer, 400, "error decoding json")
+		RespondWithError(writer, 500, "error retrieving refreshing token from header");
 		return
 	}
 
-	token, err := cfg.db.GetRefreshToken(req.Context(), userInfo.Token)
+	token, err := cfg.db.GetRefreshToken(req.Context(), tokenString)
 	if err != nil {
 		RespondWithError(writer, 500, "error retrieving refresh token")
 		return
@@ -46,10 +37,10 @@ func (cfg config) Refresh(writer http.ResponseWriter, req *http.Request) {
 	}
 
 	type refreshToken struct {
-		token string `json:"token"`
+		Token string `json:"token"`
 	}
 
 	RespondWithJson(writer, 200, refreshToken{
-		token: jwToken,
+		Token: jwToken,
 	})
 }

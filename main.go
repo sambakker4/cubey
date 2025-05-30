@@ -58,10 +58,11 @@ func main() {
 
 	mux.HandleFunc("POST /api/login", cfg.LoginUser)
 	mux.HandleFunc("POST /api/refresh", cfg.Refresh)
+	mux.HandleFunc("POST /api/revoke", cfg.RevokeRefreshToken)
 
 	fmt.Printf("Serving files on port %v\n", port)
-	server.ListenAndServe()
-	
+	err = server.ListenAndServe()
+
 	if err != nil {
 		log.Fatal(err)
 	}

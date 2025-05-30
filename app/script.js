@@ -1,7 +1,8 @@
 import { updateTimer } from "./timer.js";
 import { generateScramble } from "./scramble.js"
 import { createTable } from "./timeTable.js"
-import { loginUser } from "./login.js";
+import { hideSignOutButton, loginUser, showSignOutButton, revokeRefreshToken, refreshUser } from "./login.js";
+import { createCookie, getCookie, removeCookie } from "./cookies.js";
 
 const timeTable = document.getElementById("time-table");
 let rows = [["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"]];
@@ -12,8 +13,19 @@ let startedHolding = 0;
 let justStopped = false;
 let beingHeld = false;
 const timeToHold = 1000;
-let token;
 const url = "http://localhost:8080";
+let token = signInUserWithCookie();
+
+async function signInUserWithCookie() {
+    let refreshToken = getCookie();
+    let refreshResponse = await refreshUser(refreshToken.replace("refresh_token=", ""), url + "/api/refresh");
+    if (refreshResponse.length == 1) {
+        return;
+    }
+
+    showSignOutButton();
+    return refreshResponse.token;
+}
 
 function startTimer() {
     document.getElementById("time").textContent = "0.00";
@@ -28,7 +40,10 @@ function stopTimer() {
     document.getElementById("scramble").textContent = generateScramble(20, "3x3");
 }
 
+
 createTable(timeTable, tableHeadings, rows);
+signInUserWithCookie();
+console.log(token);
 document.getElementById("scramble").textContent = generateScramble(20, "3x3");
 
 
@@ -50,28 +65,48 @@ document.getElementById("close-signup-page-button").addEventListener("click", ()
     document.getElementById("signup-page").style.display = "none";
 });
 
+document.getElementById("signout-button").addEventListener("click", () => {
+    document.getElementById("signout-page").style.display = "flex";
+})
+
+document.getElementById("close-signout-page-button").addEventListener("click", () => {
+    document.getElementById("signout-page").style.display = "none";
+})
+
+document.getElementById("signout-button-no").addEventListener("click", () => {
+    document.getElementById("signout-page").style.display = "none";
+})
+
+document.getElementById("signout-button-yes").addEventListener("click", () => {
+    hideSignOutButton();
+    token = undefined;
+    removeCookie("refresh_token");
+    revokeRefreshToken(refreshToken, url + "/api/revoke");
+})
 
 document.getElementById("login-page-form").addEventListener("submit", async function(event){
     event.preventDefault();
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
     let displayError = document.getElementById("display-error-login");
+
+    displayError.style.display = "none";
+    displayError.textContent = "";
+
     if (!email || !password) {
         displayError.textContent = "Fill out all fields"; 
         displayError.style.display = "block";
-    } else {
-        displayError.style.display = "none";
-        displayError.textContent = "";
-    }
+    } 
 
     let response = await loginUser(email, password, url + "/api/login");
     if (response.length == 1) {
-        displayError.textContent = response[0];
+        displayError.textContent = response.error;
         displayError.style.display = "block";
         return;
-    } else {
-        token = response[0];
     }
+    showSignOutButton();
+    createCookie("refresh_token", response.refreshToken, 60);
+    token = response.token;
 });
 
 document.getElementById("signup-page-form").addEventListener("submit", async function(event){
@@ -79,13 +114,16 @@ document.getElementById("signup-page-form").addEventListener("submit", async fun
     const email = document.getElementById("signup-email").value;
     const password = document.getElementById("signup-password").value;
     let displayError = document.getElementById("display-error-signup");
+
+    displayError.style.display = "none";
+    displayError.textContent = "";
+
     if (!email || !password) {
         displayError.textContent = "Fill out all fields"; 
         displayError.style.display = "block";
-    } else {
-        displayError.style.display = "none";
-        displayError.textContent = "";
-    }
+        return
+    } 
+
     // signup user
 
     let response = await loginUser(email, password, url + "/api/users");
@@ -97,13 +135,14 @@ document.getElementById("signup-page-form").addEventListener("submit", async fun
     // login user
 
     response = await loginUser(email, password, url + "/api/login");
-    if (response.length == 1) {
-        displayError.textContent = response[0];
+    if (response.error != undefined) {
+        displayError.textContent = response.error;
         displayError.style.display = "block";
         return;
-    } else {
-        token = response[0];
-    }
+    } 
+    showSignOutButton();
+    createCookie("refresh_token", response.refreshToken, 60);
+    token = response.token;
 });
 
 document.addEventListener("keydown", (event) => {

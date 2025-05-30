@@ -8,31 +8,38 @@
     </head>
 
     <body>
-        <div id="signup-page">
-            <div id="close-signup-page-button">
+        <div id="signup-page" class="pages">
+
+            <div id="close-signup-page-button" class="closing-button">
                 <button>X</button>
             </div>
+
             <h3>Signup For Cubey</h3>
             <form id="signup-page-form">
+
                 <h4 id="display-error-signup"></h4>
                 <fieldset>
                     <legend>Email</legend>
 
                     <input type="text" id="signup-email">
                 </fieldset>
+
                 <fieldset>
                     <legend>Password</legend>
 
                     <input type="password" id="signup-password">
                 </fieldset>
+
                 <button type="submit">Sign In</button>
+
             </form>
         </div>
 
-        <div id="login-page">
-            <div id="close-login-page-button">
+        <div id="login-page" class="pages">
+            <div id="close-login-page-button" class="closing-button">
                 <button>X</button>
             </div>
+
             <h3>Login Cubey</h3>
             <form id="login-page-form">
                 <h4 id="display-error-login"></h4>
@@ -41,6 +48,7 @@
 
                     <input type="text" id="login-email">
                 </fieldset>
+
                 <fieldset>
                     <legend>Password</legend>
 
@@ -50,11 +58,25 @@
             </form>
         </div>
 
+        <div id="signout-page" class="pages"> 
+            <div id="close-signout-page-button" class="closing-button">
+                <button>X</button>
+            </div>
+            <div id="question">
+                <h3>Are you sure you want to signout of Cubey?</h3>
+            </div>
+            <div id="signout-buttons">
+                <button id="signout-button-yes" class="page-button">Yes</button>
+                <button id="signout-button-no" class="page-button">No</button>
+            </div>
+        </div>
+
         <nav>
             <img src="images/cubey_logo.png" alt="cubey logo" id="cubey-logo">
             <div id="scramble">F' D' R U B2 F2 D U2 R2 U' F2 L2 B' F2 D F D' B' R</div>
-            <button id="login-button">Login</button>
-            <button id="signup-button">Sign Up</button>
+            <button id="login-button" class="page-button">Login</button>
+            <button id="signup-button" class="page-button">Sign Up</button>
+            <button id="signout-button" class="page-button">Sign Out</button>
         </nav>
 
         <div id="main-page">

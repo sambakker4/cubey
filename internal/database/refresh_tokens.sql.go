@@ -59,6 +59,7 @@ WHERE id = (
     SELECT user_id
     FROM refresh_tokens
     WHERE token = $1
+    LIMIT 1
 )
 `
 

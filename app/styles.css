@@ -41,7 +41,7 @@ nav {
     width: 13vw;
 }
 
-#login-page, #signup-page {
+.pages {
     display: none;
     flex-direction: column;
     align-items: center;
@@ -58,20 +58,20 @@ nav {
     color: var(--light-orange);
 }
 
-#close-login-page-button, #close-signup-page-button {
+.closing-button{
     font-size: 20px;
     position: absolute;
     left: calc(100% - 60px);
     top: 20px;
 }
 
-#close-login-page-button button, #close-signup-page-button button {
+.closing-button button{
     align-self: flex-start;
     background-color: var(--dark-green);
     color: var(--light-orange);
 }
 
-#login-button, #signup-button {
+.page-button {
     width: 5vw;
     height: 30%;
     margin: 10px;
@@ -82,6 +82,26 @@ nav {
     font-optical-sizing: auto;
     font-weight: 600;
     font-style: normal;
+}
+
+#signout-button {
+    display: none;
+}
+
+#signout-page #question {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+#signout-button-yes, #signout-button-no {
+    height: 100%;
+}
+
+#signout-buttons {
+    display: flex;
+    flex-direction: row;
 }
 
 form {
