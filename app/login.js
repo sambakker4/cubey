@@ -12,13 +12,10 @@ async function loginUser(email, password, url) {
         });
         const data = await response.json();
 
-        if (data.error !== undefined) {
-            return { error: data.error };
-        }
-
         return {
             token: data.token,
-            refreshToken: data.refresh_token
+            refreshToken: data.refresh_token,
+            error: data.error
         };
     } catch (err) {
         console.log(err)
@@ -36,12 +33,9 @@ async function refreshUser(refresh_token, url) {
         });
         const data = await response.json();
 
-        if (data.error !== undefined) {
-            return { error: data.error };
-        }
-
         return {
             token: data.token,
+            error: data.error
         };
 
     } catch (err) {

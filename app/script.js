@@ -2,7 +2,7 @@ import { updateTimer } from "./timer.js";
 import { generateScramble } from "./scramble.js"
 import { createTable } from "./timeTable.js"
 import { hideSignOutButton, loginUser, showSignOutButton, revokeRefreshToken, refreshUser } from "./login.js";
-import { createCookie, getCookie, removeCookie } from "./cookies.js";
+import { createCookie, getRefreshToken, removeCookie } from "./cookies.js";
 
 const timeTable = document.getElementById("time-table");
 let rows = [["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"]];
@@ -14,11 +14,15 @@ let justStopped = false;
 let beingHeld = false;
 const timeToHold = 1000;
 const url = "http://localhost:8080";
-let token = signInUserWithCookie();
+let token = await signInUserWithCookie();
 
 async function signInUserWithCookie() {
-    let refreshToken = getCookie();
-    let refreshResponse = await refreshUser(refreshToken.replace("refresh_token=", ""), url + "/api/refresh");
+    let refreshToken = getRefreshToken();
+    if (refreshToken == "") {
+        return;
+    }
+
+    let refreshResponse = await refreshUser(refreshToken, url + "/api/refresh");
     if (refreshResponse.length == 1) {
         return;
     }
@@ -43,7 +47,6 @@ function stopTimer() {
 
 createTable(timeTable, tableHeadings, rows);
 signInUserWithCookie();
-console.log(token);
 document.getElementById("scramble").textContent = generateScramble(20, "3x3");
 
 
@@ -80,8 +83,8 @@ document.getElementById("signout-button-no").addEventListener("click", () => {
 document.getElementById("signout-button-yes").addEventListener("click", () => {
     hideSignOutButton();
     token = undefined;
+    revokeRefreshToken(getRefreshToken(), url + "/api/revoke");
     removeCookie("refresh_token");
-    revokeRefreshToken(refreshToken, url + "/api/revoke");
 })
 
 document.getElementById("login-page-form").addEventListener("submit", async function(event){
@@ -99,12 +102,14 @@ document.getElementById("login-page-form").addEventListener("submit", async func
     } 
 
     let response = await loginUser(email, password, url + "/api/login");
-    if (response.length == 1) {
+    if (response.error != undefined) {
         displayError.textContent = response.error;
         displayError.style.display = "block";
         return;
     }
     showSignOutButton();
+    document.getElementById("login-email").value = "";
+    document.getElementById("login-password").value = "";
     createCookie("refresh_token", response.refreshToken, 60);
     token = response.token;
 });
@@ -127,8 +132,8 @@ document.getElementById("signup-page-form").addEventListener("submit", async fun
     // signup user
 
     let response = await loginUser(email, password, url + "/api/users");
-    if (response.length == 1) {
-        displayError.textContent = response[0];
+    if (response.error != undefined) {
+        displayError.textContent = response.error;
         displayError.style.display = "block";
         return;
     }
@@ -141,6 +146,8 @@ document.getElementById("signup-page-form").addEventListener("submit", async fun
         return;
     } 
     showSignOutButton();
+    document.getElementById("signup-email").value = "";
+    document.getElementById("signup-password").value = "";
     createCookie("refresh_token", response.refreshToken, 60);
     token = response.token;
 });

@@ -9,9 +9,9 @@ function removeCookie(name) {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
 
-function getCookie() {
-    let cookie = document.cookie
-    return cookie
+function getRefreshToken() {
+    let cookie = document.cookie;
+    return cookie.replace("refresh_token=", "");
 }
 
-export { createCookie, removeCookie, getCookie };
+export { createCookie, removeCookie, getRefreshToken };
