@@ -24,7 +24,7 @@ type Time struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Time      float64
+	Time      string
 	Scramble  string
 	UserID    uuid.UUID
 }

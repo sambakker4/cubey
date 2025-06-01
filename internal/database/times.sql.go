@@ -11,25 +11,38 @@ import (
 	"github.com/google/uuid"
 )
 
-const createTime = `-- name: CreateTime :one
-INSERT INTO times(id, created_at, updated_at, scramble, user_id)
+const createTime = `-- name: CreateTime :exec
+INSERT INTO times(id, created_at, updated_at, scramble, user_id, time)
 VALUES(
     gen_random_uuid(),
     NOW(),
     NOW(),
     $1,
-    $2
+    $2,
+    $3
 )
-RETURNING id, created_at, updated_at, time, scramble, user_id
 `
 
 type CreateTimeParams struct {
 	Scramble string
 	UserID   uuid.UUID
+	Time     string
 }
 
-func (q *Queries) CreateTime(ctx context.Context, arg CreateTimeParams) (Time, error) {
-	row := q.db.QueryRowContext(ctx, createTime, arg.Scramble, arg.UserID)
+func (q *Queries) CreateTime(ctx context.Context, arg CreateTimeParams) error {
+	_, err := q.db.ExecContext(ctx, createTime, arg.Scramble, arg.UserID, arg.Time)
+	return err
+}
+
+const getMostRecentTime = `-- name: GetMostRecentTime :one
+SELECT id, created_at, updated_at, time, scramble, user_id FROM times
+WHERE user_id = $1
+ORDER BY created_at DESC
+LIMIT 1
+`
+
+func (q *Queries) GetMostRecentTime(ctx context.Context, userID uuid.UUID) (Time, error) {
+	row := q.db.QueryRowContext(ctx, getMostRecentTime, userID)
 	var i Time
 	err := row.Scan(
 		&i.ID,
@@ -45,7 +58,7 @@ func (q *Queries) CreateTime(ctx context.Context, arg CreateTimeParams) (Time, e
 const getTimes = `-- name: GetTimes :many
 SELECT id, created_at, updated_at, time, scramble, user_id FROM times
 WHERE user_id = $1
-ORDER BY created_at
+ORDER BY created_at DESC
 LIMIT $2
 `
 

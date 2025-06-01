@@ -22,6 +22,5 @@ func (cfg config) RevokeRefreshToken(writer http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	writer.WriteHeader(204)
-	writer.Write(make([]byte, 0))
+	writer.WriteHeader(http.StatusNoContent)
 }

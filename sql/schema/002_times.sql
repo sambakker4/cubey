@@ -3,7 +3,7 @@ CREATE TABLE times(
     id UUID PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
-    time FLOAT NOT NULL,
+    time TEXT NOT NULL,
     scramble TEXT NOT NULL,
     user_id UUID NOT NULL,
     CONSTRAINT fk_user
