@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -19,14 +18,12 @@ type Time struct {
 func (cfg config) GetTimes(writer http.ResponseWriter, req *http.Request) {
 	token, err := auth.GetBearerToken(req.Header)	
 	if err != nil {
-		log.Print(err)
 		RespondWithError(writer, 400, "error retrieving token from header")
 		return
 	}
 
 	userID, err := auth.ValidateJWT(token, cfg.tokenSecret)
 	if err != nil {
-		log.Print(err)
 		RespondWithError(writer, 500, "error retrieving user ID from token")
 		return
 	}
@@ -39,14 +36,12 @@ func (cfg config) GetTimes(writer http.ResponseWriter, req *http.Request) {
 
 	amount, err := strconv.Atoi(amountString)
 	if err != nil {
-		log.Print(err)
 		RespondWithError(writer, 400, "could not convert string to int")
 		return
 	}
 
 	times, err := cfg.db.GetTimes(req.Context(), database.GetTimesParams{UserID: userID, Limit: int32(amount)})
 	if err != nil {
-		log.Print(err)
 		RespondWithError(writer, 500, "error retrieving times from database")
 		return
 	}
@@ -107,8 +102,14 @@ func (cfg config) CreateTime(writer http.ResponseWriter, req *http.Request) {
 
 	lastNumber, err := cfg.db.GetMostRecentTime(req.Context(), userID)
 	if err != nil {
-		RespondWithError(writer, 500, "error getting most recent time")	
-		return
+		if err.Error() == "sql: no rows in result set" {
+			lastNumber = database.Time{Number: 1}
+		} else {
+			RespondWithError(writer, 500, "error getting most recent time")	
+			return
+		}
+	} else {
+		lastNumber.Number++
 	}
 
 	err = cfg.db.CreateTime(req.Context(), database.CreateTimeParams{

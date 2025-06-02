@@ -18,7 +18,6 @@ const url = "http://localhost:8080";
 let token = await signInUserWithCookie();
 
 (async function initApp() {
-    token = await signInUserWithCookie();
     await addRows();
     createTable(timeTable, tableHeadings, rows);
     document.getElementById("scramble").textContent = generateScramble(20, "3x3");
@@ -26,11 +25,14 @@ let token = await signInUserWithCookie();
 
 async function addRows() {
     let times = await getTimes(url + `/api/times?amount=8`, token);
-    times = times.times
+    times = times.time_obj;
     for (let i = 0; i < times.length; i++) {
-        let row = [i, times[i]];
-        console.log(row);
+        let row = [times[i].number, times[i].time];
         rows.push(row);
+    }
+
+    while (rows.length < 8) {
+        rows.push(["-", "-"]);
     }
 }
 

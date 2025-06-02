@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 	"net/http"
+	"log"
 
 	"github.com/sambakker4/cubey/internal/auth"
 )
@@ -16,6 +17,7 @@ func (cfg config) Refresh(writer http.ResponseWriter, req *http.Request) {
 
 	token, err := cfg.db.GetRefreshToken(req.Context(), tokenString)
 	if err != nil {
+		log.Print(err)
 		RespondWithError(writer, 500, "error retrieving refresh token")
 		return
 	}
