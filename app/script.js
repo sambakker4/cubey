@@ -3,9 +3,10 @@ import { generateScramble } from "./scramble.js"
 import { createTable } from "./timeTable.js"
 import { hideSignOutButton, loginUser, showSignOutButton, revokeRefreshToken, refreshUser } from "./login.js";
 import { createCookie, getRefreshToken, removeCookie } from "./cookies.js";
+import { createTime, getTimes } from "./times.js"
 
 const timeTable = document.getElementById("time-table");
-let rows = [["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"], ["-", "-"]];
+let rows = [];
 const tableHeadings = ["Num", "Time"];
 let timerId;
 let isRunning = false;
@@ -15,6 +16,37 @@ let beingHeld = false;
 const timeToHold = 1000;
 const url = "http://localhost:8080";
 let token = await signInUserWithCookie();
+
+(async function initApp() {
+    token = await signInUserWithCookie();
+    await addRows();
+    createTable(timeTable, tableHeadings, rows);
+    document.getElementById("scramble").textContent = generateScramble(20, "3x3");
+})();
+
+async function addRows() {
+    let times = await getTimes(url + `/api/times?amount=8`, token);
+    times = times.times
+    for (let i = 0; i < times.length; i++) {
+        let row = [i, times[i]];
+        console.log(row);
+        rows.push(row);
+    }
+}
+
+setInterval(async function() {
+    let refreshToken = getRefreshToken();
+    if (refreshToken == "") {
+        return;
+    }
+
+    let refreshResponse = await refreshUser(refreshToken, url + "/api/refresh");
+    if (refreshResponse.length == 1) {
+        return;
+    }
+
+    token = refreshToken.token;
+}, 1000 * 60 * 14);
 
 async function signInUserWithCookie() {
     let refreshToken = getRefreshToken();
@@ -42,13 +74,10 @@ function startTimer() {
 function stopTimer() {
     clearInterval(timerId);
     document.getElementById("scramble").textContent = generateScramble(20, "3x3");
+    let time = document.getElementById("time").textContent;
+    let scramble = document.getElementById("scramble").textContent;
+    createTime(url + "/api/times", time, scramble, token);
 }
-
-
-createTable(timeTable, tableHeadings, rows);
-signInUserWithCookie();
-document.getElementById("scramble").textContent = generateScramble(20, "3x3");
-
 
 document.getElementById("login-button").addEventListener("click", () => {
     document.getElementById("login-page").style.display = "flex";

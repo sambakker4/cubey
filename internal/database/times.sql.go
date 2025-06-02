@@ -12,14 +12,15 @@ import (
 )
 
 const createTime = `-- name: CreateTime :exec
-INSERT INTO times(id, created_at, updated_at, scramble, user_id, time)
+INSERT INTO times(id, created_at, updated_at, scramble, user_id, time, number)
 VALUES(
     gen_random_uuid(),
     NOW(),
     NOW(),
     $1,
     $2,
-    $3
+    $3,
+    $4
 )
 `
 
@@ -27,15 +28,21 @@ type CreateTimeParams struct {
 	Scramble string
 	UserID   uuid.UUID
 	Time     string
+	Number   int32
 }
 
 func (q *Queries) CreateTime(ctx context.Context, arg CreateTimeParams) error {
-	_, err := q.db.ExecContext(ctx, createTime, arg.Scramble, arg.UserID, arg.Time)
+	_, err := q.db.ExecContext(ctx, createTime,
+		arg.Scramble,
+		arg.UserID,
+		arg.Time,
+		arg.Number,
+	)
 	return err
 }
 
 const getMostRecentTime = `-- name: GetMostRecentTime :one
-SELECT id, created_at, updated_at, time, scramble, user_id FROM times
+SELECT id, number, created_at, updated_at, time, scramble, user_id FROM times
 WHERE user_id = $1
 ORDER BY created_at DESC
 LIMIT 1
@@ -46,6 +53,7 @@ func (q *Queries) GetMostRecentTime(ctx context.Context, userID uuid.UUID) (Time
 	var i Time
 	err := row.Scan(
 		&i.ID,
+		&i.Number,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Time,
@@ -56,7 +64,7 @@ func (q *Queries) GetMostRecentTime(ctx context.Context, userID uuid.UUID) (Time
 }
 
 const getTimes = `-- name: GetTimes :many
-SELECT id, created_at, updated_at, time, scramble, user_id FROM times
+SELECT id, number, created_at, updated_at, time, scramble, user_id FROM times
 WHERE user_id = $1
 ORDER BY created_at DESC
 LIMIT $2
@@ -78,6 +86,7 @@ func (q *Queries) GetTimes(ctx context.Context, arg GetTimesParams) ([]Time, err
 		var i Time
 		if err := rows.Scan(
 			&i.ID,
+			&i.Number,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.Time,

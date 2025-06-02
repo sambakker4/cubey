@@ -1,6 +1,7 @@
 -- +goose Up
 CREATE TABLE times(
     id UUID PRIMARY KEY,
+    number INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     time TEXT NOT NULL,

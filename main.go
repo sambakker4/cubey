@@ -60,6 +60,9 @@ func main() {
 	mux.HandleFunc("POST /api/refresh", cfg.Refresh)
 	mux.HandleFunc("POST /api/revoke", cfg.RevokeRefreshToken)
 
+	mux.HandleFunc("GET /api/times", cfg.GetTimes)
+	mux.HandleFunc("POST /api/times", cfg.CreateTime)
+
 	fmt.Printf("Serving files on port %v\n", port)
 	err = server.ListenAndServe()
 

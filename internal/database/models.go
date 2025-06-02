@@ -22,6 +22,7 @@ type RefreshToken struct {
 
 type Time struct {
 	ID        uuid.UUID
+	Number    int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Time      string

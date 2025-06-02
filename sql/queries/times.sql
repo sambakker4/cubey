@@ -1,12 +1,13 @@
 -- name: CreateTime :exec
-INSERT INTO times(id, created_at, updated_at, scramble, user_id, time)
+INSERT INTO times(id, created_at, updated_at, scramble, user_id, time, number)
 VALUES(
     gen_random_uuid(),
     NOW(),
     NOW(),
     $1,
     $2,
-    $3
+    $3,
+    $4
 );
 
 -- name: GetTimes :many
