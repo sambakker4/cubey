@@ -23,4 +23,15 @@ function createTable(timeTable, headings, rows) {
     }
 }
 
-export { createTable }
+function updateTable(timeTable, newRows) {
+    let tblBody = timeTable.querySelector("tbody");
+    let rows = tblBody.getElementsByTagName("tr")
+
+    for (let i = 0; i < rows.length; i++) {
+        let tblData = rows[i].getElementsByTagName("td");
+        tblData[0].textContent = newRows[i][0];
+        tblData[1].textContent = newRows[i][1];
+    }
+}
+
+export { createTable, updateTable }

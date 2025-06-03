@@ -1,6 +1,6 @@
 import { updateTimer } from "./timer.js";
 import { generateScramble } from "./scramble.js"
-import { createTable } from "./timeTable.js"
+import { createTable, updateTable } from "./timeTable.js"
 import { hideSignOutButton, loginUser, showSignOutButton, revokeRefreshToken, refreshUser } from "./login.js";
 import { createCookie, getRefreshToken, removeCookie } from "./cookies.js";
 import { createTime, getTimes } from "./times.js"
@@ -24,8 +24,14 @@ let token = await signInUserWithCookie();
 })();
 
 async function addRows() {
-    let times = await getTimes(url + `/api/times?amount=8`, token);
-    times = times.time_obj;
+    let times;
+    if (token != undefined) {
+        times = await getTimes(url + `/api/times?amount=8`, token);
+        times = times.time_obj;
+    } else {
+        times = [];
+    }
+
     for (let i = 0; i < times.length; i++) {
         let row = [times[i].number, times[i].time];
         rows.push(row);
@@ -49,6 +55,17 @@ setInterval(async function() {
 
     token = refreshToken.token;
 }, 1000 * 60 * 14);
+
+function updateTimes(time) {
+    let value = parseInt(rows[0][0]);
+    if (rows[0][0] == "-") {
+        value = 0;
+    }
+
+    let newTime = [value + 1, time];
+    rows.pop();
+    rows.unshift(newTime);
+}
 
 async function signInUserWithCookie() {
     let refreshToken = getRefreshToken();
@@ -77,8 +94,12 @@ function stopTimer() {
     clearInterval(timerId);
     document.getElementById("scramble").textContent = generateScramble(20, "3x3");
     let time = document.getElementById("time").textContent;
-    let scramble = document.getElementById("scramble").textContent;
-    createTime(url + "/api/times", time, scramble, token);
+    if (token != undefined) {
+        let scramble = document.getElementById("scramble").textContent;
+        createTime(url + "/api/times", time, scramble, token);
+    }
+    updateTimes(time);
+    updateTable(timeTable, rows);
 }
 
 document.getElementById("login-button").addEventListener("click", () => {
