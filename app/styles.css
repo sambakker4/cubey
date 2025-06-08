@@ -193,3 +193,7 @@ th, td {
     border: 4px solid var(--dark-green);
 }
 
+td {
+    text-align: right;
+}
+

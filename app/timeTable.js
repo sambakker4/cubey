@@ -34,4 +34,16 @@ function updateTable(timeTable, newRows) {
     }
 }
 
-export { createTable, updateTable }
+function resetTable(timeTable, arrayRows) {
+    arrayRows = [];
+    let tblBody = timeTable.querySelector("tbody");
+    let rows = tblBody.getElementsByTagName("tr")
+
+    for (let i = 0; i < rows.length; i++) {
+        let tblData = rows[i].getElementsByTagName("td");
+        tblData[0].textContent = "-";
+        tblData[1].textContent = "-";
+    }
+}
+
+export { createTable, updateTable, resetTable }

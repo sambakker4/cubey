@@ -1,8 +1,9 @@
 import { updateTimer } from "./timer.js";
 import { generateScramble } from "./scramble.js"
-import { createTable, updateTable } from "./timeTable.js"
+import { createTable, updateTable, resetTable } from "./timeTable.js"
 import { hideSignOutButton, loginUser, showSignOutButton, revokeRefreshToken, refreshUser } from "./login.js";
 import { createCookie, getRefreshToken, removeCookie } from "./cookies.js";
+import { calculateAverageOfFive } from "./average.js";
 import { createTime, getTimes } from "./times.js"
 
 const timeTable = document.getElementById("time-table");
@@ -21,10 +22,12 @@ let token = await signInUserWithCookie();
     await addRows();
     createTable(timeTable, tableHeadings, rows);
     document.getElementById("scramble").textContent = generateScramble(20, "3x3");
+    document.getElementById("ao5").textContent = calculateAverageOfFive(rows);
 })();
 
 async function addRows() {
     let times;
+    rows = [];
     if (token != undefined) {
         times = await getTimes(url + `/api/times?amount=8`, token);
         times = times.time_obj;
@@ -100,6 +103,7 @@ function stopTimer() {
     }
     updateTimes(time);
     updateTable(timeTable, rows);
+    document.getElementById("ao5").textContent = calculateAverageOfFive(rows);
 }
 
 document.getElementById("login-button").addEventListener("click", () => {
@@ -132,11 +136,14 @@ document.getElementById("signout-button-no").addEventListener("click", () => {
     document.getElementById("signout-page").style.display = "none";
 })
 
-document.getElementById("signout-button-yes").addEventListener("click", () => {
+document.getElementById("signout-button-yes").addEventListener("click", async () => {
     hideSignOutButton();
     token = undefined;
     revokeRefreshToken(getRefreshToken(), url + "/api/revoke");
     removeCookie("refresh_token");
+    await addRows();
+    resetTable(timeTable);
+    document.getElementById("ao5").textContent = calculateAverageOfFive(rows);
 })
 
 document.getElementById("login-page-form").addEventListener("submit", async function(event){
@@ -164,6 +171,10 @@ document.getElementById("login-page-form").addEventListener("submit", async func
     document.getElementById("login-password").value = "";
     createCookie("refresh_token", response.refreshToken, 60);
     token = response.token;
+    resetTable(timeTable, rows);
+    await addRows();
+    updateTable(timeTable, rows);
+    document.getElementById("ao5").textContent = calculateAverageOfFive(rows);
 });
 
 document.getElementById("signup-page-form").addEventListener("submit", async function(event){
@@ -202,6 +213,10 @@ document.getElementById("signup-page-form").addEventListener("submit", async fun
     document.getElementById("signup-password").value = "";
     createCookie("refresh_token", response.refreshToken, 60);
     token = response.token;
+    resetTable(timeTable, rows);
+    await addRows();
+    updateTable(timeTable, rows);
+    document.getElementById("ao5").textContent = calculateAverageOfFive(rows);
 });
 
 document.addEventListener("keydown", (event) => {
